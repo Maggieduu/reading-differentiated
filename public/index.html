@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Differentiated Reading Generator | 分级阅读生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #EFF4FB;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: #2C3E50;
+            padding: 30px 0;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #2C3E50;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #6B7B8A;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(44, 62, 80, 0.08);
+            border: 1px solid rgba(44, 62, 80, 0.06);
+        }
+
+        .input-section h2 {
+            color: #2C3E50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        textarea {
+            width: 100%;
+            height: 380px;
+            border: 2px solid #E8ECF0;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 1rem;
+            resize: none;
+            transition: all 0.3s;
+            background: #FAFBFC;
+            color: #2C3E50;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #7C9CB5;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(124, 156, 181, 0.15);
+        }
+
+        textarea::placeholder {
+            color: #A0ADB8;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #5B8DBE 0%, #7C9CB5 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(91, 141, 190, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(91, 141, 190, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #F0F4F8;
+            color: #6B7B8A;
+            border: 1px solid #E0E5EA;
+        }
+
+        .btn-secondary:hover {
+            background: #E8ECF0;
+            color: #2C3E50;
+        }
+
+        .output-section {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(44, 62, 80, 0.08);
+            border: 1px solid rgba(44, 62, 80, 0.06);
+        }
+
+        .output-section h2 {
+            color: #2C3E50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 8px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: #F0F4F8;
+            color: #6B7B8A;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #5B8DBE 0%, #7C9CB5 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(91, 141, 190, 0.3);
+        }
+
+        .tab:hover:not(.active) {
+            background: #E8ECF0;
+            color: #2C3E50;
+        }
+
+        .tab-sub {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        .tab-content {
+            display: none;
+            height: 380px;
+            overflow-y: auto;
+            border-radius: 16px;
+            padding: 0;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #2C3E50;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .level-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+
+        .badge-scaffolded {
+            background: linear-gradient(135deg, #FFF5E6 0%, #FFE8CC 100%);
+            color: #C67B2A;
+        }
+
+        .badge-standard {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            color: #4A8B4E;
+        }
+
+        .badge-advanced {
+            background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD9 100%);
+            color: #C44569;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 60px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid #E8ECF0;
+            border-top: 3px solid #5B8DBE;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .placeholder-text {
+            color: #A0ADB8;
+            text-align: center;
+            padding-top: 120px;
+            font-size: 0.95rem;
+        }
+
+        .text-content {
+            white-space: pre-wrap;
+            line-height: 1.9;
+            color: #3D5166;
+        }
+
+        .tab-content-text {
+            height: 340px;
+            overflow-y: auto;
+            background: #FAFBFC;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        /* Scrollbar styling */
+        .tab-content-text::-webkit-scrollbar,
+        textarea::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .tab-content-text::-webkit-scrollbar-track,
+        textarea::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .tab-content-text::-webkit-scrollbar-thumb,
+        textarea::-webkit-scrollbar-thumb {
+            background: #D0D7DE;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 分级阅读生成器</h1>
+            <p>Differentiated Reading Generator · 将文章转换为三个难度版本</p>
+        </header>
+
+        <div class="main-content">
+            <div class="input-section">
+                <h2>📝 输入文章 | Input Text</h2>
+                <textarea id="inputText" placeholder="在这里输入或粘贴文章...
+
+支持各类文本：
+· 故事和叙事 Stories
+· 文章和论文 Articles
+· 教育内容 Educational content"></textarea>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="generateLevels()">
+                        ✨ 生成版本
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearText()">
+                        🗑️ 清空
+                    </button>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <h2>📚 分级版本 | Differentiated Versions</h2>
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('scaffolded')">🟡<span class="tab-sub">简化版</span></button>
+                    <button class="tab" onclick="switchTab('standard')">🟢<span class="tab-sub">标准版</span></button>
+                    <button class="tab" onclick="switchTab('advanced')">🔴<span class="tab-sub">进阶版</span></button>
+                </div>
+
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <p style="color: #6B7B8A;">正在生成版本...</p>
+                </div>
+
+                <div id="scaffolded" class="tab-content active">
+                    <span class="level-badge badge-scaffolded">简化版 Scaffolded</span>
+                    <div id="scaffoldedText" class="tab-content-text">
+                        <p class="placeholder-text">点击上方"生成版本"按钮<br>即可创建简化版</p>
+                    </div>
+                </div>
+
+                <div id="standard" class="tab-content">
+                    <span class="level-badge badge-standard">标准版 Standard</span>
+                    <div id="standardText" class="tab-content-text">
+                        <p class="placeholder-text">点击上方"生成版本"按钮<br>即可创建标准版</p>
+                    </div>
+                </div>
+
+                <div id="advanced" class="tab-content">
+                    <span class="level-badge badge-advanced">进阶版 Advanced</span>
+                    <div id="advancedText" class="tab-content-text">
+                        <p class="placeholder-text">点击上方"生成版本"按钮<br>即可创建进阶版</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function clearText() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('scaffoldedText').innerHTML = '<p class="placeholder-text">点击上方"生成版本"按钮<br>即可创建简化版</p>';
+            document.getElementById('standardText').innerHTML = '<p class="placeholder-text">点击上方"生成版本"按钮<br>即可创建标准版</p>';
+            document.getElementById('advancedText').innerHTML = '<p class="placeholder-text">点击上方"生成版本"按钮<br>即可创建进阶版</p>';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function generateLevels() {
+            const inputText = document.getElementById('inputText').value.trim();
+
+            if (!inputText) {
+                alert('请输入文章内容！');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            loading.classList.add('show');
+
+            document.getElementById('scaffoldedText').innerHTML = '';
+            document.getElementById('standardText').innerHTML = '';
+            document.getElementById('advancedText').innerHTML = '';
+
+            try {
+                const response = await fetch('/api/differentiate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: inputText })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || `请求失败 (${response.status})`);
+                }
+
+                const result = await response.json();
+
+                document.getElementById('scaffoldedText').innerHTML = `<div class="text-content">${escapeHtml(result.scaffolded)}</div>`;
+                document.getElementById('standardText').innerHTML = `<div class="text-content">${escapeHtml(result.standard)}</div>`;
+                document.getElementById('advancedText').innerHTML = `<div class="text-content">${escapeHtml(result.advanced)}</div>`;
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`生成失败：${error.message}`);
+            } finally {
+                loading.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>
