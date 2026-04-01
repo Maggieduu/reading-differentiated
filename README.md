@@ -62,37 +62,6 @@ reading-differentiated/
 
 ---
 
-## 🌐 部署到 Railway | Deploy on Railway
-
-### Railway 部署步骤 | Deployment Steps
-
-1. **创建 GitHub 仓库 | Create GitHub Repo**
-   - 将此项目推送到 GitHub | Push this project to GitHub
-
-2. **Railway 部署 | Deploy on Railway**
-   - 登录 | Login [Railway.app](https://railway.app)
-   - 点击 | Click **New Project** → **Deploy from GitHub repo**
-   - 选择 | Select `reading-differentiated` 仓库 | repository
-
-3. **配置环境变量 | Configure Environment Variables**
-   - 在 Railway 项目设置中添加 | Add in project settings:
-     - `MINIMAX_API_KEY` = 你的 API Key | your API Key
-
-4. **完成！ | Done!**
-   - Railway 会自动部署 | Railway deploys automatically
-   - 获得一个 URL（如 | e.g. `https://xxx.up.railway.app`）
-
----
-
-## ⚠️ 注意事项 | Important Notes
-
-- 请勿将 `.env` 文件或 API Key 提交到 GitHub
-- Do NOT commit `.env` or API Key to GitHub
-- `.gitignore` 已配置忽略敏感文件 | Already configured to ignore sensitive files
-- MiniMax API 有使用限制，请关注用量 | API usage limits apply
-
----
-
 ## 📄 License
 
 MIT
