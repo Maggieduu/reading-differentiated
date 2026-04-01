@@ -1,7 +1,23 @@
 # 📚 分级阅读生成器 | Differentiated Reading Generator
+AI-powered text leveling tool for Chinese heritage speakers and near-native learners.
 
 将任意文章自动转换为三个难度等级的阅读版本。
 Transform any text into three difficulty levels for reading.
+
+[Live Demo](https://reading-differentiated-production-a3e7.up.railway.app/)
+
+
+<img width="1304" height="658" alt="截屏2026-04-02 02 16 11" src="https://github.com/user-attachments/assets/c8f2213e-adb0-461d-b78e-f454f4693c57" />
+<img width="1304" height="663" alt="截屏2026-04-02 02 16 27" src="https://github.com/user-attachments/assets/3375edec-2e7d-4051-8fe9-4aa59a57bb18" />
+
+---
+
+## 🔧技术栈 ｜ Tech Stack
+
+- Frontend: HTML/CSS/JS
+- Backend: Node.js + Express
+- AI Tool: Trae/ OpenAI/ Claude / Minimax API
+- Deployment: Railway
 
 ---
 
@@ -62,6 +78,3 @@ reading-differentiated/
 
 ---
 
-## 📄 License
-
-MIT
